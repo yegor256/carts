@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <iostream>
+
 #include "stocks.h"
 
 class Item {
@@ -97,6 +100,7 @@ public:
 
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
+    std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
     for (int r = 0; r < 1000000; ++r) {
         Cart *cart = new EmptyCart();
@@ -112,5 +116,6 @@ int main() {
         total += cart->deliver();
         delete cart;
     }
+    std::cout << "Total charge is " << total << "\n";
     return total;
 }
