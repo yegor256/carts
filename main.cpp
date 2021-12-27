@@ -1,10 +1,15 @@
-#include <cstdio>
+#include <iostream>
 #include <cstdlib>
 
-#define STOCKS_TOTAL 100
-
 struct stock { int price; int total; };
-stock stocks[STOCKS_TOTAL];
+stock stocks[] = {
+    { .price = 10, .total = 10 },
+    { .price = 12, .total = 7 },
+    { .price = 50, .total = 90 },
+    { .price = 250, .total = 1 },
+    { .price = 50, .total = 9 },
+    { .price = 14, .total = 6 },
+};
 
 /**
  * A abstract shippable item in the stock.
@@ -104,13 +109,17 @@ class EmptyCart : public Cart {
 };
 
 int main() {
+    int max = sizeof(stocks) / sizeof(stocks[0]);
     Cart* cart = new EmptyCart();
-    for (int i = 0; i < 10; ++i) {
-        int pos = STOCKS_TOTAL * rand() / RAND_MAX;
-        Item* item = new Digital(new Stocked(&stocks[pos]));
+    for (int i = 0; i < max / 2; ++i) {
+        Item* item = new Digital(new Stocked(&stocks[i]));
+        cart = cart->add(item);
+    }
+    for (int i = max / 2; i < max; ++i) {
+        Item* item = new Tangible(new Stocked(&stocks[i]));
         cart = cart->add(item);
     }
     cart = cart->recalc(1);
     int total = cart->deliver();
-    printf("Total: %d\n", total);
+    std::cout << "Total: " << total << "\n";
 }
