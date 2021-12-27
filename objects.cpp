@@ -1,4 +1,4 @@
-#include "stocks.h"
+#include "stocks.hpp"
 
 class Item {
 public:
@@ -52,7 +52,7 @@ private:
 class Cart {
 public:
     virtual ~Cart() = default;
-    virtual Cart* add(Item* i) = 0;
+    virtual Cart* add(Item* i) = 0; // completely identical code in all derived classes
     virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
 };

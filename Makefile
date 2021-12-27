@@ -1,14 +1,14 @@
-CPPFILES = $(wildcard *.cpp)
-OBJFILES = $(CPPFILES:.cpp=.o)
-OUT = objects
+CPPFILES = $(wildcard *.c)
+OBJFILES = $(CPPFILES:.c=.o)
+OUT = functions
 
-CPPFLAGS = -Wall -std=c++11
-LDLIBS = -lstdc++ -lm
+CPPFLAGS = -Wall -fsanitize=address
+LDLIBS = -stdlibc -lm -static-libasan
 
 all: binaries
 
 binaries: $(OBJFILES)
-	cc objects.o $(LDLIBS) -o objects
+	cc functions.o $(LDLIBS) -o functions
 
 .PHONY: clean
 clean:
