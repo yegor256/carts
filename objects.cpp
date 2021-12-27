@@ -107,10 +107,10 @@ int main() {
             Item *item = new Tangible(&stocks[i]);
             cart = cart->add(item);
         }
-        Cart *cart2 = cart->recalc(7);
-        total += cart2->deliver();
+        Cart *re = cart->recalc(7);
+        total += re->deliver();
         delete cart;
-        delete cart2;
+        delete re;
     }
     std::cout << "Total charge is " << total << "\n";
     return total;
