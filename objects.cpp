@@ -107,7 +107,7 @@ int main() {
             Item *item = new Tangible(&stocks[i]);
             cart = cart->add(item);
         }
-        Cart *re = cart->recalc(7);
+        Cart* re = cart->recalc(7);
         total += re->deliver();
         delete cart;
         delete re;
