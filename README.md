@@ -8,21 +8,21 @@ Then, the cart is sent to the customer and the total price of it is calculated.
 
 To run it, just do:
 
-```asm
+```bash
 $ make
 $ ./objects
 ```
 
 To run inside Docker (here `-m=10M` allows the container to use only 10Mb of memory):
 
-```asm
+```bash
 $ docker build . --tag=carts
 $ docker run -it -m=10M carts
 ```
 
 If you want to step into Docker container and run the app manually, do this:
 
-```asm
+```bash
 $ docker run -it --entrypoint=/bin/bash carts
 ```
 
