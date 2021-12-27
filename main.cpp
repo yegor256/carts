@@ -1,5 +1,3 @@
-#include <iostream>
-
 struct stock { int price; int total; };
 stock stocks[] = {
     { .price = 10, .total = 10 },
@@ -118,6 +116,6 @@ int main() {
     }
     cart = cart->recalc(7);
     int total = cart->deliver();
-    std::cout << "Total: " << total << "\n";
     delete cart;
+    return total;
 }
