@@ -1,15 +1,22 @@
-CPPFILES = $(wildcard *.cpp)
-OBJFILES = $(CPPFILES:.cpp=.o)
-OUT = objects
+SRCS = $(wildcard *.cpp)
+OBJS = $(addprefix bin/,${SRCS:.cpp=.o})
+BINS = $(OBJS:.o=.a)
 
 CPPFLAGS = -Wall -std=c++11
 LDLIBS = -lstdc++ -lm
 
-all: binaries
+all: $(BINS)
 
-binaries: $(OBJFILES)
-	cc objects.o $(LDLIBS) -o objects
+bin/%.o: %.cpp
+	mkdir -p bin
+	g++ $(CPPFLAGS) -c -o "$@" "$<"
+
+%.cpp:
+
+bin/%.a: bin/%.o
+	mkdir -p bin
+	cc "$<" $(LDLIBS) -o "$@"
 
 .PHONY: clean
 clean:
-	rm -f $(OBJFILES) $(OUT)
+	rm -rf bin
