@@ -12,13 +12,15 @@ stock stocks[] = {
 
 class Item {
 public:
+    virtual ~Item() = default;
     virtual Item* prepare(int country) = 0;
     virtual int deliver() = 0;
 };
 
 class Stocked : public Item {
 public:
-    explicit Stocked(stock* s) : stk(s) {};
+    explicit Stocked(stock* s) : stk(s) {}
+    ~Stocked() override = default;
     Item* prepare(int country) override {
         return this;
     }
@@ -32,7 +34,8 @@ private:
 
 class Digital : public Stocked {
 public:
-    explicit Digital(Stocked* s) : Stocked(*s) {};
+    explicit Digital(Stocked* s) : Stocked(*s) {}
+    ~Digital() override = default;
     int deliver() override {
         return Stocked::deliver() / 2;
     }
@@ -41,6 +44,7 @@ public:
 class Tangible : public Stocked {
 public:
     explicit Tangible(Stocked* s) : Tangible(s, 0) {};
+    ~Tangible() override = default;
     Item* prepare(int country) override {
         if (country == 7) {
             return new Tangible(this, 25);
@@ -57,6 +61,7 @@ private:
 
 class Cart {
 public:
+    virtual ~Cart() = default;
     virtual Cart* add(Item* i) = 0;
     virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
@@ -64,7 +69,11 @@ public:
 
 class FullCart : public Cart {
 public:
-    FullCart(Cart* c, Item* i) : before(c), item(i) {};
+    FullCart(Cart* c, Item* i) : before(c), item(i) {}
+    ~FullCart() override {
+        delete this->before;
+        delete this->item;
+    }
     Cart* add(Item* i) override {
         return new FullCart(this, i);
     }
@@ -83,6 +92,8 @@ private:
 };
 
 class EmptyCart : public Cart {
+public:
+    ~EmptyCart() override = default;
     Cart* add(Item* i) override {
         return new FullCart(this, i);
     }
@@ -108,4 +119,5 @@ int main() {
     cart = cart->recalc(7);
     int total = cart->deliver();
     std::cout << "Total: " << total << "\n";
+    delete cart;
 }
