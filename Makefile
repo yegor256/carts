@@ -1,13 +1,14 @@
 CPPFILES = $(wildcard *.cpp)
 OBJFILES = $(CPPFILES:.cpp=.o)
-OUT = main
+OUT = objects
 
 CPPFLAGS = -Wall -std=c++11
 LDLIBS = -lstdc++ -lm
 
-$(OUT): $(OBJFILES)
+all: binaries
 
-all: $(OUT)
+binaries: $(OBJFILES)
+	cc objects.o $(LDLIBS) -o objects
 
 .PHONY: clean
 clean:
