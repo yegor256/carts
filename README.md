@@ -10,7 +10,7 @@ To run it, just do:
 
 ```bash
 $ make
-$ ./objects
+$ ./bin/objects.a
 ```
 
 To run inside Docker (here `-m=10M` allows the container to use only 10Mb of memory):
