@@ -105,17 +105,20 @@ public:
 
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
-    Cart* cart = new EmptyCart();
-    for (int i = 0; i < max / 2; ++i) {
-        Item* item = new Digital(new Stocked(&stocks[i]));
-        cart = cart->add(item);
+    int total = 0;
+    for (int r = 0; r < 1000000; ++r) {
+        Cart *cart = new EmptyCart();
+        for (int i = 0; i < max / 2; ++i) {
+            Item *item = new Digital(new Stocked(&stocks[i]));
+            cart = cart->add(item);
+        }
+        for (int i = max / 2; i < max; ++i) {
+            Item *item = new Tangible(new Stocked(&stocks[i]));
+            cart = cart->add(item);
+        }
+        cart = cart->recalc(7);
+        total += cart->deliver();
+        delete cart;
     }
-    for (int i = max / 2; i < max; ++i) {
-        Item* item = new Tangible(new Stocked(&stocks[i]));
-        cart = cart->add(item);
-    }
-    cart = cart->recalc(7);
-    int total = cart->deliver();
-    delete cart;
     return total;
 }
