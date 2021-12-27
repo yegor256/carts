@@ -1,12 +1,4 @@
-struct stock { int price; int total; };
-stock stocks[] = {
-    { .price = 10, .total = 10 },
-    { .price = 12, .total = 7 },
-    { .price = 50, .total = 90 },
-    { .price = 250, .total = 1 },
-    { .price = 50, .total = 9 },
-    { .price = 14, .total = 6 },
-};
+#include "stocks.h"
 
 class Item {
 public:
