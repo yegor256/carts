@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #define STOCKS_TOTAL 100
 
@@ -10,12 +10,13 @@ stock stocks[STOCKS_TOTAL];
  * A abstract shippable item in the stock.
  */
 class Item {
+public:
     /**
      * Make a new item prepared to be delivered to this country.
-     * @param country Country code, like 'US' or 'RU'
+     * @param country Country code, like 1 for 'USA' or 7 for 'Russia'
      * @return New item, reconfigured
      */
-    virtual Item* prepare(char country[2]) = 0;
+    virtual Item* prepare(int country) = 0;
     /**
      * Deliver this item to the customer and return the total
      * amount of money to charge for it.
@@ -26,8 +27,11 @@ class Item {
 
 class Stocked : public Item {
 public:
-    Stocked(stock* s) : stk(s) {};
-    virtual int deliver() override {
+    explicit Stocked(stock* s) : stk(s) {};
+    Item* prepare(int country) override {
+        return this;
+    }
+    int deliver() override {
         this->stk->total--;
         return this->stk->price;
     }
@@ -37,60 +41,50 @@ private:
 
 class Digital : public Stocked {
 public:
-    Digital(Stocked s) : Stocked(s) {};
-    virtual int deliver() override {
+    explicit Digital(Stocked* s) : Stocked(*s) {};
+    int deliver() override {
         return Stocked::deliver() / 2;
     }
 };
 
 class Tangible : public Stocked {
 public:
-    Tangible(Stocked s) : Tangible(s, 0) {};
-    Item* prepare(char country[2]) {
-        if (country[0] != 'U' || country[1] != 'S') {
-            return new Tangible(*this, 10);
+    explicit Tangible(Stocked* s) : Tangible(s, 0) {};
+    Item* prepare(int country) override {
+        if (country != 1) {
+            return new Tangible(this, 10);
         }
         return new Tangible(*this);
     }
-    int deliver() {
+    int deliver() override {
         return Stocked::deliver() * (1 - this->discount / 100);
     }
 private:
-    Tangible(Stocked s, int d) : Stocked(s), discount(d) {};
+    Tangible(Stocked* s, int d) : Stocked(*s), discount(d) {};
     int discount;
 };
 
 class Cart {
-    virtual Cart* add(Item i) = 0;
-    virtual Cart* recalc(int zip) = 0;
+public:
+    virtual Cart* add(Item* i) = 0;
+    virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
-};
-
-class FullCart;
-
-class EmptyCart : public Cart {
-    virtual Cart* add(Item i) {
-        return FullCart(*this, i);
-    }
-    virtual Cart* recalc(int zip) {
-        return this;
-    }
-    virtual int deliver() {
-        return 0;
-    }
 };
 
 class FullCart : public Cart {
 public:
     FullCart(Cart* c, Item* i) : before(c), item(i) {};
-    virtual Cart* add(Item i) {
-        return FullCart(*this, i);
+    Cart* add(Item* i) override {
+        return new FullCart(this, i);
     }
-    virtual Cart* recalc(int zip) {
-        return FullCart(this->before, this->item.discount(d));
+    Cart* recalc(int country) override {
+        return new FullCart(
+            this->before->recalc(country),
+            this->item->prepare(country)
+        );
     }
-    int deliver() {
-        return this->before.deliver() + this->item.deliver();
+    int deliver() override {
+        return this->before->deliver() + this->item->deliver();
     }
 private:
     Cart* before;
@@ -98,18 +92,25 @@ private:
 };
 
 class EmptyCart : public Cart {
-public:
-    EmptyCart() {};
+    Cart* add(Item* i) override {
+        return new FullCart(this, i);
+    }
+    Cart* recalc(int country) override {
+        return this;
+    }
+    int deliver() override {
+        return 0;
+    }
 };
 
 int main() {
-    Cart cart = Cart();
+    Cart* cart = new EmptyCart();
     for (int i = 0; i < 10; ++i) {
-        int pos = ITEMS_TOTAL * rand() / RAND_MAX;
-        Item item = Item(&items[pos]);
-        cart = cart.add(item);
+        int pos = STOCKS_TOTAL * rand() / RAND_MAX;
+        Item* item = new Digital(new Stocked(&stocks[pos]));
+        cart = cart->add(item);
     }
-    cart = cart.shipTo(1);
-    int total = cart.deliver();
+    cart = cart->recalc(1);
+    int total = cart->deliver();
     printf("Total: %d\n", total);
 }
