@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstdlib>
 
 struct stock { int price; int total; };
 stock stocks[] = {
@@ -11,22 +10,9 @@ stock stocks[] = {
     { .price = 14, .total = 6 },
 };
 
-/**
- * A abstract shippable item in the stock.
- */
 class Item {
 public:
-    /**
-     * Make a new item prepared to be delivered to this country.
-     * @param country Country code, like 1 for 'USA' or 7 for 'Russia'
-     * @return New item, reconfigured
-     */
     virtual Item* prepare(int country) = 0;
-    /**
-     * Deliver this item to the customer and return the total
-     * amount of money to charge for it.
-     * @return The price the customer has to pay
-     */
     virtual int deliver() = 0;
 };
 
@@ -56,8 +42,8 @@ class Tangible : public Stocked {
 public:
     explicit Tangible(Stocked* s) : Tangible(s, 0) {};
     Item* prepare(int country) override {
-        if (country != 1) {
-            return new Tangible(this, 10);
+        if (country == 7) {
+            return new Tangible(this, 25);
         }
         return new Tangible(*this);
     }
@@ -119,7 +105,7 @@ int main() {
         Item* item = new Tangible(new Stocked(&stocks[i]));
         cart = cart->add(item);
     }
-    cart = cart->recalc(1);
+    cart = cart->recalc(7);
     int total = cart->deliver();
     std::cout << "Total: " << total << "\n";
 }
