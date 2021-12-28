@@ -1,5 +1,7 @@
 #include "stocks.h"
 #include <stdlib.h>
+#include <stdio.h>
+
 
 enum ItemType {
     Stoked,
@@ -15,7 +17,7 @@ struct Item {
 
 void PrepareItem(int country, struct Item* item) {
     if (item->type == Tangible) {
-        item->discount = (item->discount == 7) ? 25 : item->discount;
+        item->discount = (country == 7) ? 25 : item->discount;
         item->stk = item->stk;
         item->type = item->type;
     }
@@ -30,6 +32,7 @@ int DeliverItem(struct Item* item) {
     if (item->type == Tangible) {
         res *= (1 - item->discount / 100);
     }
+
     return res;
 }
 
@@ -57,9 +60,11 @@ void CartRecalc(struct Cart* cart, int country) {
 }
 
 int CartDeliver(struct Cart* cart) {
+
     if (cart->empty) {
         return 0;
     } else {
+
         return CartDeliver(cart->before) + DeliverItem(cart->item);
     }
 }
@@ -72,12 +77,12 @@ int DeleteCart(struct Cart* cart) {
     free((void*)cart->item);
     return 0;
 }
-#include <stdio.h>
+
 
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
     int total = 0;
-    for (int r = 0; r < 1000000; ++r) {
+    for (int r = 0; r < 100; ++r) {
         struct Cart *cart = (struct Cart*)malloc(sizeof(struct Cart));
         cart->empty = 1;
         for (int i = 0; i < max / 2; ++i) {
@@ -85,6 +90,7 @@ int main() {
             item->type = Digital;
             item->stk = stocks[i];
             cart = CartAdd(cart, item);
+
         }
         for (int i = max / 2; i < max; ++i) {
             struct Item *item = (struct Item*)malloc(sizeof(struct Item));
