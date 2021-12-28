@@ -13,77 +13,73 @@ struct Item {
     enum ItemType type;
 };
 
-int PrepareItem(int country, struct Item* item, struct Item* result) {
+struct Item* PrepareItem(int country, struct Item* item) {
+    struct Item* result;
     if (item->type == Tangible) {
         result = (struct Item*) malloc(sizeof (struct Item));
-
         result->discount = (item->discount == 7) ? 25 : item->discount;
         result->stk = item->stk;
         result->type = item->type;
     } else {
         result = item;
     }
-    return 0;
+    return result;
 }
 
-int DeliverItem(struct Item* item, int* result) {
+int DeliverItem(struct Item* item) {
     item->stk.total--;
-    int tmp = item->stk.price;
+    int res = item->stk.price;
     if (item->type == Digital) {
-        tmp /= 2;
+        res /= 2;
     }
     if (item->type == Tangible) {
-        tmp *= (1 - item->discount / 100);
+        res *= (1 - item->discount / 100);
     }
-    *result += tmp;
-    return 0;
+    return res;
 }
 
 struct Cart {
     struct Cart* before;
-    struct Item item;
+    struct Item* item;
     short empty;
 };
 
-int CartAdd(struct Cart* cart, struct Item* item, struct Cart* new) {
-    new = (struct Cart*) malloc(sizeof(struct Cart));
-    new->item = *item;
+struct Cart* CartAdd(struct Cart* cart, struct Item* item) {
+    struct Cart* new = (struct Cart*) malloc(sizeof(struct Cart));
+    new->item = item;
     new->before = cart;
-
-    return 0;
+    return new;
 }
 
-int CartRecalc(struct Cart* cart, int country, struct Cart* res) {
+struct Cart* CartRecalc(struct Cart* cart, int country) {
+    struct Cart* res;
     if (cart->empty) {
         res = cart;
-        return 0;
     } else {
         res = (struct Cart*) malloc(sizeof(struct Cart));
-        CartRecalc(cart->before, country, res->before);
-        PrepareItem(country, &cart->item, &res->item);
+        res->before = CartRecalc(cart->before, country);
+        res->item = PrepareItem(country, cart->item);
     }
-    return 0;
+    return res;
 }
 
-int CartDeliver(struct Cart* cart, int* result) {
+int CartDeliver(struct Cart* cart) {
     if (cart->empty) {
-        *result += 0;
+        return 0;
     } else {
-        CartDeliver(cart->before, result);
-        DeliverItem(&cart->item, result);
+        return CartDeliver(cart->before) + DeliverItem(cart->item);
     }
-    return 0;
 }
 
 int DeleteCart(struct Cart* cart) {
     if (!cart->empty) {
-        free((void*)&cart->item);
         DeleteCart(cart->before);
         free((void*)cart->before);
     }
+    free((void*)cart->item);
     return 0;
 }
-
+#include <stdio.h>
 
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
@@ -95,18 +91,19 @@ int main() {
             struct Item *item = (struct Item*)malloc(sizeof(struct Item));
             item->type = Digital;
             item->stk = stocks[i];
-            CartAdd(cart, item, cart);
+            cart = CartAdd(cart, item);
         }
         for (int i = max / 2; i < max; ++i) {
             struct Item *item = (struct Item*)malloc(sizeof(struct Item));
             item->type = Tangible;
             item->stk = stocks[i];
             item->discount = 0;
-            CartAdd(cart, item, cart);
+            cart = CartAdd(cart, item);
         }
-        CartRecalc(cart, 7, cart);
-        CartDeliver(cart, &total);
+        cart = CartRecalc(cart, 7);
+        total += CartDeliver(cart);
         DeleteCart(cart);
     }
+    printf("%d\n", total);
     return total;
 }

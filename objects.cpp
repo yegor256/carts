@@ -94,11 +94,11 @@ public:
         return 0;
     }
 };
-
+#include <iostream>
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
     int total = 0;
-    for (int r = 0; r < 1000000; ++r) {
+    for (int r = 0; r < 100; ++r) {
         Cart *cart = new EmptyCart();
         for (int i = 0; i < max / 2; ++i) {
             Item *item = new Digital(new Stocked(&stocks[i]));
@@ -112,5 +112,6 @@ int main() {
         total += cart->deliver();
         delete cart;
     }
+
     return total;
 }
