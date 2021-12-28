@@ -1,4 +1,6 @@
-#include "stocks.hpp"
+#include <iostream>
+
+#include "stocks.h"
 
 class Item {
 public:
@@ -10,49 +12,49 @@ public:
 class Stocked : public Item {
 public:
     explicit Stocked(stock* s) : stk(s) {}
-    ~Stocked() override = default;
     Item* prepare(int country) override {
-        return this;
+        return new Stocked(stk);
     }
     int deliver() override {
         this->stk->total--;
         return this->stk->price;
     }
-private:
+protected:
     stock* stk;
 };
 
 class Digital : public Stocked {
 public:
-    explicit Digital(Stocked* s) : Stocked(*s) {}
-    ~Digital() override = default;
+    explicit Digital(stock *s) : Stocked(s) {}
     int deliver() override {
         return Stocked::deliver() / 2;
+    }
+    Item* prepare(int country) override {
+        return new Digital(stk);
     }
 };
 
 class Tangible : public Stocked {
 public:
-    explicit Tangible(Stocked* s) : Tangible(s, 0) {};
-    ~Tangible() override = default;
+    explicit Tangible(stock *s) : Tangible(Stocked(s), 0) {};
     Item* prepare(int country) override {
         if (country == 7) {
-            return new Tangible(this, 25);
+            return new Tangible(*this, 25);
         }
-        return new Tangible(*this);
+        return new Tangible(*this, 0);
     }
     int deliver() override {
         return Stocked::deliver() * (1 - this->discount / 100);
     }
 private:
-    Tangible(Stocked* s, int d) : Stocked(*s), discount(d) {};
+    Tangible(const Stocked &s, int d) : Stocked(s), discount(d) {};
     int discount;
 };
 
 class Cart {
 public:
     virtual ~Cart() = default;
-    virtual Cart* add(Item* i) = 0; // completely identical code in all derived classes
+    virtual Cart* add(Item* i) = 0;
     virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
 };
@@ -69,8 +71,8 @@ public:
     }
     Cart* recalc(int country) override {
         return new FullCart(
-            this->before->recalc(country),
-            this->item->prepare(country)
+                this->before->recalc(country),
+                this->item->prepare(country)
         );
     }
     int deliver() override {
@@ -83,35 +85,36 @@ private:
 
 class EmptyCart : public Cart {
 public:
-    ~EmptyCart() override = default;
     Cart* add(Item* i) override {
         return new FullCart(this, i);
     }
     Cart* recalc(int country) override {
-        return this;
+        return new EmptyCart();
     }
     int deliver() override {
         return 0;
     }
 };
-#include <iostream>
+
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
+    std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
-    for (int r = 0; r < 100; ++r) {
-        Cart *cart = new EmptyCart();
+    for (int r = 0; r < 1000000; ++r) {
+        Cart* cart = new EmptyCart();
         for (int i = 0; i < max / 2; ++i) {
-            Item *item = new Digital(new Stocked(&stocks[i]));
+            Item *item = new Digital(&stocks[i]);
             cart = cart->add(item);
         }
         for (int i = max / 2; i < max; ++i) {
-            Item *item = new Tangible(new Stocked(&stocks[i]));
+            Item *item = new Tangible(&stocks[i]);
             cart = cart->add(item);
         }
-        cart = cart->recalc(7);
-        total += cart->deliver();
+        Cart* re = cart->recalc(7);
+        total += re->deliver();
         delete cart;
+        delete re;
     }
-    std::cout << total;
+    std::cout << "Total charge is " << total << "\n";
     return total;
 }

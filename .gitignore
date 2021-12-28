@@ -1,3 +1,2 @@
 .idea/
-*.o
-main
+bin/

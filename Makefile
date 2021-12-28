@@ -1,4 +1,3 @@
-
 SRCS = $(wildcard *.cpp)
 OBJS = $(addprefix bin/,${SRCS:.cpp=.o})
 BINS = $(OBJS:.o=.a)
