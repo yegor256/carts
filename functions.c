@@ -13,17 +13,12 @@ struct Item {
     enum ItemType type;
 };
 
-struct Item* PrepareItem(int country, struct Item* item) {
-    struct Item* result;
+void PrepareItem(int country, struct Item* item) {
     if (item->type == Tangible) {
-        result = (struct Item*) malloc(sizeof (struct Item));
-        result->discount = (item->discount == 7) ? 25 : item->discount;
-        result->stk = item->stk;
-        result->type = item->type;
-    } else {
-        result = item;
+        item->discount = (item->discount == 7) ? 25 : item->discount;
+        item->stk = item->stk;
+        item->type = item->type;
     }
-    return result;
 }
 
 int DeliverItem(struct Item* item) {
@@ -48,19 +43,17 @@ struct Cart* CartAdd(struct Cart* cart, struct Item* item) {
     struct Cart* new = (struct Cart*) malloc(sizeof(struct Cart));
     new->item = item;
     new->before = cart;
+    new->empty = 0;
     return new;
 }
 
-struct Cart* CartRecalc(struct Cart* cart, int country) {
-    struct Cart* res;
+void CartRecalc(struct Cart* cart, int country) {
     if (cart->empty) {
-        res = cart;
+        return;
     } else {
-        res = (struct Cart*) malloc(sizeof(struct Cart));
-        res->before = CartRecalc(cart->before, country);
-        res->item = PrepareItem(country, cart->item);
+        CartRecalc(cart->before, country);
+        PrepareItem(country, cart->item);
     }
-    return res;
 }
 
 int CartDeliver(struct Cart* cart) {
@@ -100,7 +93,7 @@ int main() {
             item->discount = 0;
             cart = CartAdd(cart, item);
         }
-        cart = CartRecalc(cart, 7);
+        CartRecalc(cart, 7);
         total += CartDeliver(cart);
         DeleteCart(cart);
     }
