@@ -1,15 +1,23 @@
-CPPFILES = $(wildcard *.c)
-OBJFILES = $(CPPFILES:.c=.o)
-OUT = functions
 
-CPPFLAGS = -Wall -fsanitize=address
-LDLIBS = -stdlibc -lm -static-libasan
+SRCS = $(wildcard *.cpp)
+OBJS = $(addprefix bin/,${SRCS:.cpp=.o})
+BINS = $(OBJS:.o=.a)
 
-all: binaries
+CPPFLAGS = -Wall -std=c++11
+LDLIBS = -lstdc++ -lm
 
-binaries: $(OBJFILES)
-	cc functions.o $(LDLIBS) -o functions
+all: $(BINS)
+
+bin/%.o: %.cpp
+	mkdir -p bin
+	g++ $(CPPFLAGS) -c -o "$@" "$<"
+
+%.cpp:
+
+bin/%.a: bin/%.o
+	mkdir -p bin
+	cc "$<" $(LDLIBS) -o "$@"
 
 .PHONY: clean
 clean:
-	rm -f $(OBJFILES) $(OUT)
+	rm -rf bin

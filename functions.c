@@ -9,11 +9,13 @@ enum ItemType {
     Tangible
 };
 
+
 struct Item {
     struct stock stk;
     int discount;
     enum ItemType type;
 };
+
 
 void PrepareItem(int country, struct Item* item) {
     if (item->type == Tangible) {
@@ -22,6 +24,7 @@ void PrepareItem(int country, struct Item* item) {
         item->type = item->type;
     }
 }
+
 
 int DeliverItem(struct Item* item) {
     item->stk.total--;
@@ -32,7 +35,6 @@ int DeliverItem(struct Item* item) {
     if (item->type == Tangible) {
         res *= (1 - item->discount / 100);
     }
-
     return res;
 }
 
@@ -42,6 +44,7 @@ struct Cart {
     short empty;
 };
 
+
 struct Cart* CartAdd(struct Cart* cart, struct Item* item) {
     struct Cart* new = (struct Cart*) malloc(sizeof(struct Cart));
     new->item = item;
@@ -50,24 +53,23 @@ struct Cart* CartAdd(struct Cart* cart, struct Item* item) {
     return new;
 }
 
+
 void CartRecalc(struct Cart* cart, int country) {
-    if (cart->empty) {
-        return;
-    } else {
+    if(!cart->empty) {
         CartRecalc(cart->before, country);
         PrepareItem(country, cart->item);
     }
 }
 
-int CartDeliver(struct Cart* cart) {
 
+int CartDeliver(struct Cart* cart) {
     if (cart->empty) {
         return 0;
     } else {
-
         return CartDeliver(cart->before) + DeliverItem(cart->item);
     }
 }
+
 
 int DeleteCart(struct Cart* cart) {
     if (!cart->empty) {
@@ -90,7 +92,6 @@ int main() {
             item->type = Digital;
             item->stk = stocks[i];
             cart = CartAdd(cart, item);
-
         }
         for (int i = max / 2; i < max; ++i) {
             struct Item *item = (struct Item*)malloc(sizeof(struct Item));

@@ -112,6 +112,6 @@ int main() {
         total += cart->deliver();
         delete cart;
     }
-
+    std::cout << total;
     return total;
 }
