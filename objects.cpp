@@ -19,7 +19,7 @@ public:
         this->stk->total--;
         return this->stk->price;
     }
-private:
+protected:
     stock* stk;
 };
 
@@ -28,6 +28,9 @@ public:
     explicit Digital(stock *s) : Stocked(s) {}
     int deliver() override {
         return Stocked::deliver() / 2;
+    }
+    Item* prepare(int country) override {
+        return new Digital(stk);
     }
 };
 
@@ -68,8 +71,8 @@ public:
     }
     Cart* recalc(int country) override {
         return new FullCart(
-            this->before->recalc(country),
-            this->item->prepare(country)
+                this->before->recalc(country),
+                this->item->prepare(country)
         );
     }
     int deliver() override {
