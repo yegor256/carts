@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "stocks.h"
 
 class Item {
@@ -19,7 +18,7 @@ public:
         this->stk->total--;
         return this->stk->price;
     }
-protected:
+private:
     stock* stk;
 };
 
@@ -30,7 +29,7 @@ public:
         return Stocked::deliver() / 2;
     }
     Item* prepare(int country) override {
-        return new Digital(stk);
+        return new Digital(*this);
     }
 };
 

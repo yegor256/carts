@@ -26,6 +26,11 @@ void PrepareDigitals(int begin, int end, int* discounts) {
     Digitals(begin, end, 7, discounts);
 }
 
+void PrepareTangibles(int begin, int end, int* discounts) {
+    Tangibles(begin, end, 0, discounts);
+    Tangibles(begin, end, 7, discounts);
+}
+
 int DeliverDigitals(int begin, int end, int* discounts) {
     PrepareDigitals(begin, end, discounts);
 
@@ -35,11 +40,6 @@ int DeliverDigitals(int begin, int end, int* discounts) {
         int tmp = DeliverDigitals(begin + 1, end, discounts) + stocks[begin].price / 2;
         return tmp;
     }
-}
-
-void PrepareTangibles(int begin, int end, int* discounts) {
-    Tangibles(begin, end, 0, discounts);
-    Tangibles(begin, end, 7, discounts);
 }
 
 int DeliverTangibles(int begin, int end, int* discounts) {
@@ -65,7 +65,6 @@ int main() {
     int total = 0;
     for (int r = 0; r < 1000000; ++r) {
         total += Deliver(0, max / 2, max, discounts);
-
     }
     printf("Total charge is %d\n", total);
     return total;

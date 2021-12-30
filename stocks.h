@@ -1,4 +1,3 @@
-
 struct stock { int price; int total; };
 struct stock stocks[] = {
     { 10,  10 },
