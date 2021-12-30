@@ -1,6 +1,4 @@
-
-
-SRCS = $(%.c*)
+SRCS = $(wildcard *.c*)
 OBJS = $(addprefix bin/,${SRCS:.c*=.o})
 BINS = $(OBJS:.o=.a)
 
@@ -15,7 +13,7 @@ bin/%.o: %.c*
 
 %.c*:
 
-bin/%: bin/%.o
+bin/%.a: bin/%.o
 	mkdir -p bin
 	cc "$<" $(LDLIBS) -o "$@"
 

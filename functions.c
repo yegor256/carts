@@ -21,7 +21,14 @@ int Tangibles(int begin, int end, int country, int* discounts) {
     }
 }
 
+void PrepareDigitals(int begin, int end, int* discounts) {
+    Digitals(begin, end, 0, discounts);
+    Digitals(begin, end, 7, discounts);
+}
+
 int DeliverDigitals(int begin, int end, int* discounts) {
+    PrepareDigitals(begin, end, discounts);
+
     if (begin == end) {
         return 0;
     } else {
@@ -30,7 +37,14 @@ int DeliverDigitals(int begin, int end, int* discounts) {
     }
 }
 
+void PrepareTangibles(int begin, int end, int* discounts) {
+    Tangibles(begin, end, 0, discounts);
+    Tangibles(begin, end, 7, discounts);
+}
+
 int DeliverTangibles(int begin, int end, int* discounts) {
+    PrepareTangibles(begin, end, discounts);
+
     if (begin == end) {
         return 0;
     } else {
@@ -40,20 +54,17 @@ int DeliverTangibles(int begin, int end, int* discounts) {
     }
 }
 
+int Deliver(int begin, int border, int end, int* discounts) {
+    return DeliverDigitals(begin, border, discounts) + DeliverTangibles(border, end, discounts);
+}
+
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
     int discounts[sizeof(stocks) / sizeof(stocks[0])];
     printf("There are %d items in stocks\n", max);
     int total = 0;
     for (int r = 0; r < 1000000; ++r) {
-        Digitals(0, max / 2, 0, discounts);
-        Tangibles(max / 2, max, 0, discounts);
-
-        Digitals(0, max / 2, 7, discounts);
-        Tangibles(max / 2, max, 7, discounts);
-
-        total += DeliverDigitals(0, max / 2, discounts);
-        total += DeliverTangibles(max / 2, max, discounts);
+        total += Deliver(0, max / 2, max, discounts);
 
     }
     printf("Total charge is %d\n", total);
