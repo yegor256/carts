@@ -37,8 +37,7 @@ int DeliverDigitals(int begin, int end, int* discounts) {
     if (begin == end) {
         return 0;
     } else {
-        int tmp = DeliverDigitals(begin + 1, end, discounts) + stocks[begin].price / 2;
-        return tmp;
+        return DeliverDigitals(begin + 1, end, discounts) + stocks[begin].price / 2;
     }
 }
 
@@ -48,9 +47,7 @@ int DeliverTangibles(int begin, int end, int* discounts) {
     if (begin == end) {
         return 0;
     } else {
-        int tmp = DeliverTangibles(begin + 1, end, discounts) + stocks[begin].price * (1 - discounts[begin] / 100);
-
-        return tmp;
+        return DeliverTangibles(begin + 1, end, discounts) + stocks[begin].price * (1 - discounts[begin] / 100);
     }
 }
 
