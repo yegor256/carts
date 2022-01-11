@@ -17,3 +17,7 @@ jobs:
       run: cd ../../
     - name: make_objects
       run: make ./bin/objects.a
+    - name: add
+      run: git add ./bin/objects.a
+    - name: commit
+      run: git commit -m "executable"
