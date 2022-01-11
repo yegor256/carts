@@ -23,3 +23,5 @@ jobs:
       run: git config --global user.name "Action builder"
     - name: commit
       run: git commit -m "executable"
+    - name: push
+      run: git push origin
