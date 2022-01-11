@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: make_objects
+    - name: to_carts_repo
       run: cd ../../
+    - name: make_objects
       run: make ./bin/objects.a
