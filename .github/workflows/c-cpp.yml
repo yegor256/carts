@@ -17,11 +17,3 @@ jobs:
       run: cd ../../
     - name: make_objects
       run: make ./bin/objects.a
-    - name: add
-      run: git add -f ./bin/objects.a
-    - name: git name
-      run: git config --global user.name "Action builder"
-    - name: commit
-      run: git commit -m "executable"
-    - name: push
-      run: git push origin
