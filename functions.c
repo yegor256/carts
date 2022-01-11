@@ -20,7 +20,7 @@ int Tangibles(int begin, int end, int country, int* discounts) {
 }
 
 void PrepareDigitals(int begin, int end, int* discounts) {
-    Digitals(begin, end, 0, discounts);
+    Digitals(begin, end, 0, discounts); // procedural style!!!
     Digitals(begin, end, 7, discounts);
 }
 
