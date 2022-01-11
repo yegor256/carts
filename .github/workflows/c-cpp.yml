@@ -15,7 +15,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: make_objects
       run: make ./bin/objects.a
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
