@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "stocks.h"
 
 class Item {
@@ -7,6 +6,7 @@ public:
     virtual ~Item() = default;
     virtual Item* prepare(int country) = 0;
     virtual int deliver() = 0;
+    virtual int left() = 0;
 };
 
 class Stocked : public Item {
@@ -19,6 +19,9 @@ public:
         this->stk->total--;
         return this->stk->price;
     }
+    int left() {
+        return this->stk->total;
+    }
 private:
     stock* stk;
 };
@@ -28,6 +31,9 @@ public:
     explicit Digital(stock *s) : Stocked(s) {}
     int deliver() override {
         return Stocked::deliver() / 2;
+    }
+    Item* prepare(int country) override {
+        return new Digital(*this);
     }
 };
 
@@ -54,6 +60,7 @@ public:
     virtual Cart* add(Item* i) = 0;
     virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
+    virtual int left() = 0;
 };
 
 class FullCart : public Cart {
@@ -68,12 +75,15 @@ public:
     }
     Cart* recalc(int country) override {
         return new FullCart(
-            this->before->recalc(country),
-            this->item->prepare(country)
+                this->before->recalc(country),
+                this->item->prepare(country)
         );
     }
     int deliver() override {
         return this->before->deliver() + this->item->deliver();
+    }
+    int left() override {
+        return item->left() + before->left();
     }
 private:
     Cart* before;
@@ -91,12 +101,16 @@ public:
     int deliver() override {
         return 0;
     }
+    int left() override {
+        return 0;
+    }
 };
 
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
     std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
+    int left = 0;
     for (int r = 0; r < 1000000; ++r) {
         Cart* cart = new EmptyCart();
         for (int i = 0; i < max / 2; ++i) {
@@ -109,9 +123,11 @@ int main() {
         }
         Cart* re = cart->recalc(7);
         total += re->deliver();
+        left += re->left();
         delete cart;
         delete re;
     }
     std::cout << "Total charge is " << total << "\n";
+    std::cout << left << " items left in carts\n";
     return total;
 }
