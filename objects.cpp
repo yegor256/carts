@@ -127,6 +127,9 @@ int main() {
         delete cart;
         delete re;
     }
+
+    unbuildable code
+
     std::cout << "Total charge is " << total << "\n";
     std::cout << left << " items left in carts\n";
     return total;
