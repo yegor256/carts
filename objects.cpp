@@ -55,13 +55,22 @@ private:
 };
 
 class Cart {
+    static int requests;
 public:
     virtual ~Cart() = default;
     virtual Cart* add(Item* i) = 0;
     virtual Cart* recalc(int country) = 0;
     virtual int deliver() = 0;
     virtual int left() = 0;
+    static void mark_request() {
+        ++requests;
+    }
+    static int get_requests() {
+        return requests;
+    }
 };
+
+int Cart::requests = 0;
 
 class FullCart : public Cart {
 public:
@@ -71,18 +80,22 @@ public:
         delete this->item;
     }
     Cart* add(Item* i) override {
+        Cart::mark_request();
         return new FullCart(this, i);
     }
     Cart* recalc(int country) override {
+        Cart::mark_request();
         return new FullCart(
                 this->before->recalc(country),
                 this->item->prepare(country)
         );
     }
     int deliver() override {
+        Cart::mark_request();
         return this->before->deliver() + this->item->deliver();
     }
     int left() override {
+        Cart::mark_request();
         return item->left() + before->left();
     }
 private:
@@ -93,15 +106,19 @@ private:
 class EmptyCart : public Cart {
 public:
     Cart* add(Item* i) override {
+        Cart::mark_request();
         return new FullCart(this, i);
     }
     Cart* recalc(int country) override {
+        Cart::mark_request();
         return new EmptyCart();
     }
     int deliver() override {
+        Cart::mark_request();
         return 0;
     }
     int left() override {
+        Cart::mark_request();
         return 0;
     }
 };
@@ -129,5 +146,6 @@ int main() {
     }
     std::cout << "Total charge is " << total << "\n";
     std::cout << left << " items left in carts\n";
+    std::cout << "There was " << Cart::get_requests() << " requests to the carts\n";
     return total;
 }
