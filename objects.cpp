@@ -128,7 +128,7 @@ int main() {
     std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
     int left = 0;
-    for (int r = 0; r < 1000000; ++r) {
+    for (int r = 0; r < 1e6; ++r) {
         Cart* cart = new EmptyCart();
         for (int i = 0; i < max / 2; ++i) {
             Item *item = new Digital(&stocks[i]);
