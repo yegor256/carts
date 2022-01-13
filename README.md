@@ -1,4 +1,4 @@
-[![new](https://github.com/MCJOHN974/carts/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/MCJOHN974/carts/actions/workflows/c-cpp.yml)
+[![new](https://github.com/yegor256/carts/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/yegor256/carts/actions/workflows/c-cpp.yml)
 
 
 
