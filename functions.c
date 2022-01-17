@@ -20,11 +20,13 @@ int Tangibles(int begin, int end, int country, int* discounts) {
 }
 
 int PrepareDigitals(int begin, int end, int* discounts) {
-    return Digitals(begin, end, 0, discounts) + Digitals(begin, end, 7, discounts);
+    return Digitals(begin, end, 0, discounts) +
+           Digitals(begin, end, 7, discounts);
 }
 
 int PrepareTangibles(int begin, int end, int* discounts) {
-    return Tangibles(begin, end, 0, discounts) + Tangibles(begin, end, 7, discounts);
+    return Tangibles(begin, end, 0, discounts) +
+           Tangibles(begin, end, 7, discounts);
 }
 
 int DeliverDigitals(int begin, int end, int* discounts, int* requests) {
@@ -33,7 +35,8 @@ int DeliverDigitals(int begin, int end, int* discounts, int* requests) {
         return 0;
     }
     stocks[begin].total--;
-    return DeliverDigitals(begin + 1, end, discounts, requests) + stocks[begin].price / 2;
+    return DeliverDigitals(begin + 1, end, discounts, requests) +
+           stocks[begin].price / 2;
 }
 
 int DeliverTangibles(int begin, int end, int* discounts, int* requests) {
@@ -42,12 +45,15 @@ int DeliverTangibles(int begin, int end, int* discounts, int* requests) {
         return 0;
     }
     stocks[begin].total--;
-    return DeliverTangibles(begin + 1, end, discounts, requests) + stocks[begin].price * (1 - discounts[begin] / 100);
+    return DeliverTangibles(begin + 1, end, discounts, requests) +
+           stocks[begin].price * (1 - discounts[begin] / 100);
 }
 
 int Deliver(int begin, int border, int end, int* discounts, int* requests) {
-    *requests += (PrepareDigitals(begin, border, discounts) + PrepareTangibles(border, end, discounts));
-    return DeliverDigitals(begin, border, discounts, requests) + DeliverTangibles(border, end, discounts, requests);
+    *requests += (PrepareDigitals(begin, border, discounts) +
+                  PrepareTangibles(border, end, discounts));
+    return DeliverDigitals(begin, border, discounts, requests) +
+           DeliverTangibles(border, end, discounts, requests);
 }
 
 int Left(int begin, int end, int* requests) {
