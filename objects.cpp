@@ -1,6 +1,8 @@
 #include <iostream>
 #include "stocks.h"
 
+int REQUESTS = 0;
+
 class Item {
 public:
     virtual ~Item() = default;
@@ -63,6 +65,7 @@ public:
     virtual int left() = 0;
 };
 
+
 class FullCart : public Cart {
 public:
     FullCart(Cart* c, Item* i) : before(c), item(i) {}
@@ -71,18 +74,22 @@ public:
         delete this->item;
     }
     Cart* add(Item* i) override {
+        ++REQUESTS;
         return new FullCart(this, i);
     }
     Cart* recalc(int country) override {
+        ++REQUESTS;
         return new FullCart(
                 this->before->recalc(country),
                 this->item->prepare(country)
         );
     }
     int deliver() override {
+        ++REQUESTS;
         return this->before->deliver() + this->item->deliver();
     }
     int left() override {
+        ++REQUESTS;
         return item->left() + before->left();
     }
 private:
@@ -93,15 +100,19 @@ private:
 class EmptyCart : public Cart {
 public:
     Cart* add(Item* i) override {
+        ++REQUESTS;
         return new FullCart(this, i);
     }
     Cart* recalc(int country) override {
+        ++REQUESTS;
         return new EmptyCart();
     }
     int deliver() override {
+        ++REQUESTS;
         return 0;
     }
     int left() override {
+        ++REQUESTS;
         return 0;
     }
 };
@@ -111,7 +122,7 @@ int main() {
     std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
     int left = 0;
-    for (int r = 0; r < 1000000; ++r) {
+    for (int r = 0; r < 1e6; ++r) {
         Cart* cart = new EmptyCart();
         for (int i = 0; i < max / 2; ++i) {
             Item *item = new Digital(&stocks[i]);
@@ -129,5 +140,6 @@ int main() {
     }
     std::cout << "Total charge is " << total << "\n";
     std::cout << left << " items left in carts\n";
+    std::cout << "There was " << REQUESTS << " requests to the carts\n";
     return total;
 }
