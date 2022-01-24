@@ -2,7 +2,7 @@ SRCS = $(wildcard *.c*)
 OBJS = $(addprefix bin/,${SRCS:.c*=.o})
 BINS = $(OBJS:.o=.a)
 
-CPPFLAGS = -Wall -std=c++20
+CPPFLAGS = -std=c++20
 LDLIBS = -lstdc++ -lm
 
 all: $(BINS)
