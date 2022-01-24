@@ -21,7 +21,7 @@ public:
         this->stk->total--;
         return this->stk->price;
     }
-    int left() {
+    int left() override {
         return this->stk->total;
     }
 private:
@@ -117,6 +117,7 @@ public:
     }
 };
 
+#include <map>
 int main() {
     int max = sizeof(stocks) / sizeof(stocks[0]);
     std::cout << "There are " << max << " items in stocks\n";
