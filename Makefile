@@ -2,14 +2,14 @@ SRCS = $(wildcard *.c*)
 OBJS = $(addprefix bin/,${SRCS:.c*=.o})
 BINS = $(OBJS:.o=.a)
 
-CPPFLAGS = -Wall -std=c++11
+CPPFLAGS = -Wall -std=c++20
 LDLIBS = -lstdc++ -lm
 
 all: $(BINS)
 
 bin/%.o: %.c*
 	mkdir -p bin
-	g++ $(CPPFLAGS) -c -o "$@" "$<"
+	clang++ $(CPPFLAGS) -c -o "$@" "$<"
 
 %.c*:
 
