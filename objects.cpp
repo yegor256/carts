@@ -19,7 +19,7 @@ public:
         this->stk->total--;
         return this->stk->price;
     }
-    int left() {
+    int left() override {
         return this->stk->total;
     }
 private:
