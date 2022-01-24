@@ -106,7 +106,17 @@ public:
     }
 };
 
+#include <map>
 int main() {
+    // some c++20 only code
+    std::map<int, int> mp = {{1, 2}, {2, 3}, {3, 5}, {5, 15}, {17, 28}};
+    for(auto& [k, v] : mp) {
+        std::cout << k << ';' << v << ' ';
+    }
+    std::cout << '\n';
+
+
+
     int max = sizeof(stocks) / sizeof(stocks[0]);
     std::cout << "There are " << max << " items in stocks\n";
     int total = 0;
